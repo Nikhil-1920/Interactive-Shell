@@ -21,7 +21,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <limits.h>
-#include <cctype>   // isdigit(), isspace() ke liye
+#include <cctype>       // for isdigit(), isspace() 
 
 using namespace std;
 
@@ -35,12 +35,13 @@ using namespace std;
 #define COLOR_RESET    "\033[0m"   
 
 // --- Global Variables ---
+
 // History file aur maximum history size
 const string HISTORY_FILE = ".shell_history";
 const size_t MAX_HISTORY_SIZE = 20;
-list<string> history;              // command history ka list
+list<string> history;              // command history ki list
 vector<string> historyVector;      // vector mein history (for easy access)
-string prevDirectory;              // last directory yaad rakhta hai
+string prevDirectory;              // last directory remember karne ke liye
 volatile pid_t fg_pid = 0;         // current foreground process id
 struct termios orig_termios;       
 
@@ -113,7 +114,7 @@ void sigchldHandler(int sig) {
 }
 
 // ===================== Terminal Settings =====================
-// Non-canonical mode mein set karo taaki input char-by-char aaye.
+// Non-canonical mode mein set karta hai for char-by-char input.
 void setNonCanonicalMode() {
     tcgetattr(STDIN_FILENO, &orig_termios);
     struct termios raw = orig_termios;
@@ -121,7 +122,7 @@ void setNonCanonicalMode() {
     tcsetattr(STDIN_FILENO, TCSANOW, &raw);
 }
 
-// Terminal settings ko wapas original state mein le aao.
+// Terminal settings ko wapas original state mein le jane ke liye.
 void resetTerminal() {
     tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios);
 }
@@ -201,7 +202,7 @@ void printPrompt() {
 
 // ===================== readInput() with Autocomplete & History =====================
 
-// Yeh function input leta hai aur arrow keys, TAB, Ctrl-D handle karta hai.
+// Function arrow keys, TAB, Ctrl-D handle karta hai.
 string readInput() {
     string input;
     size_t historyIndex = historyVector.size(); 
@@ -212,7 +213,7 @@ string readInput() {
             cout << COLOR_RESET << "\n";
             break;
         }
-        if (c == 27) { // Arrow keys ke liye escape seq
+        if (c == 27) {                      // Arrow keys ke liye escape seq
             int seq1 = getchar();
             int seq2 = getchar();
             if (seq1 == '[') {
@@ -280,13 +281,13 @@ string readInput() {
                 cout << input;
             }
             continue;
-        } else if (c == 127 || c == 8) { // Backspace key
+        } else if (c == 127 || c == 8) {    // Backspace key
             if (!input.empty()) {
                 input.pop_back();
                 cout << "\b \b";
             }
             continue;
-        } else if (c == 4) {            // Ctrl-D: exit if no input
+        } else if (c == 4) {                // Ctrl-D: exit if no input
             if (input.empty()) {
                 cout << "\n";
                 exit(0);
@@ -324,7 +325,6 @@ vector<string> tokenize(const string &str, const char *delim) {
 
 // ===================== findExecutablePath Helper =====================
 
-// Yeh function command ke executable path ko dhoondhta hai
 string findExecutablePath(const string &cmd) {
     string trimmed = cmd;
     size_t start = trimmed.find_first_not_of(" \t");
@@ -364,7 +364,7 @@ string findExecutablePath(const string &cmd) {
 
 // ===================== I/O Redirection Helper =====================
 
-// Yeh function I/O redirection operators (<, >, >>) ko process karta hai
+// I/O redirection operators (<, >, >>) ko process karta hai
 void processRedirection(vector<string> &tokens, int &inputFd, int &outputFd) {
     inputFd = -1;
     outputFd = -1;
@@ -406,7 +406,7 @@ void processRedirection(vector<string> &tokens, int &inputFd, int &outputFd) {
 
 // ===================== Arithmetic Evaluator =====================
 
-// Yeh recursive-descent parser arithmetic expressions evaluate karta hai
+// recursive-descent parser arithmetic expressions evaluate karta hai
 long long parseExpression(const string &s, size_t &i) {
     long long result = parseTerm(s, i);
     while (i < s.size()) {
@@ -487,7 +487,6 @@ long long evaluateArithmetic(const string &expr) {
 
 // ===================== External Command Execution =====================
 
-// function external commands execute karta hai using fork/execv
 void executeExternalCommand(vector<string> tokens, bool background) {
     if (tokens.empty() || tokens[0].empty())
         return;
@@ -726,7 +725,7 @@ void handleLs(const vector<string> &tokens) {
         closedir(dp);
         sort(entries.begin(), entries.end(), [](const pair<string, bool> &a, const pair<string, bool> &b) {
             if (a.second != b.second)
-                return a.second > b.second; // directories pehle
+                return a.second > b.second;     // directories first
             return a.first < b.first;
         });
         if (flag_l) {
