@@ -1,6 +1,6 @@
 # Interactive Shell (ishell)
 
-`ishell` is a custom interactive shell written in C++ that emulates core functionalities of a Unix-like shell. It supports a variety of built-in commands, external command execution, input/output redirection, piping, background processes, signal handling, command history, and tab-based autocompletion. This README provides comprehensive instructions on building, running, and using the shell, along with details on all supported commands and features.
+`ishell` is a custom interactive shell written in C++ that emulates core functionalities of a Unix-like shell. It supports a variety of built-in commands, external command execution, input/output redirection, piping, background processes, signal handling, command history, and tab-based autocompletion.
 
 ## Features
 - **Built-in Commands**: `cd`, `pwd`, `echo`, `ls`, `pinfo`, `search`, `history`, `exit`
